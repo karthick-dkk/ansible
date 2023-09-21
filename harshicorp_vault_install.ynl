@@ -1,0 +1,25 @@
+---
+- name: Install and Configure HashiCorp Vault
+  hosts: vm #Mention hostname or host group
+  become: yes  # This is equivalent to using sudo
+
+  tasks:
+    - name: Install yum-utils
+      yum:
+        name: yum-utils
+        state: present
+
+    - name: Add HashiCorp Vault repository
+      command: yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+
+    - name: Install Vault
+      yum:
+        name: vault
+        state: present
+
+########
+##Run Command
+##
+##ansible-playbook vault.yaml --user <admin_user> --ask-become-pass
+##
+##############
