@@ -1,0 +1,93 @@
+---
+- name: Install Packages - Mariadb,R,Vault,Python3,Java,net-tools,etc
+  hosts: vm # mention your host group
+  become: yes  # Enable privilege escalation to root
+  vars:
+    r_version: "4.3.1"
+    mariadb_version: "10.5"
+  tasks:
+    - name:  Download R package
+      ansible.builtin.get_url:
+       url: https://cdn.rstudio.com/r/centos-7/pkgs/R-{{ r_version }}-1-1.x86_64.rpm
+       dest: /tmp/
+       mode: '0755'
+    - name: Install R package
+      yum:
+        name: /tmp/R-{{ r_version }}-1-1.x86_64.rpm
+        state: present
+      register: install_output
+
+    - name: Display R version
+      command: /opt/R/{{ r_version }}/bin/R --version
+    - name: Create symbolic links for R and Rscript
+      file:
+        src: /opt/R/{{ r_version }}/bin/{{ item }}
+        dest: /usr/local/bin/{{ item }}
+        state: link
+      loop:
+        - R
+        - Rscript
+    - name: Install yum-utils
+      yum:
+        name: yum-utils
+        state: present
+
+    - name: Add HashiCorp Vault repository
+      command: yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+
+    - name: Install Vault
+      yum:
+        name: vault
+        state: present
+
+    - name: Download mariadb_repo_setup script
+      ansible.builtin.get_url:
+        url: https://downloads.mariadb.com/MariaDB/mariadb_repo_setup
+        dest: /tmp/mariadb_repo_setup
+        mode: '0755'
+
+    - name: Run mariadb_repo_setup script for version 10.5
+      ansible.builtin.command: /tmp/mariadb_repo_setup - mariadb-server-version={{ mariadb_version }}
+    - name: Installing 3rdparty packages -->
+      ansible.builtin.yum:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - MariaDB-server
+        - MariaDB-compat
+        - MariaDB-client
+        - MariaDB-shared
+        - MariaDB-devel
+        - MariaDB-common
+        - epel
+        - elinks
+        - dos2unix
+        - telnet
+        - wget
+        - curl
+        - htop
+        - vim
+        - java
+        - vault
+        - java-devel
+        - nginx
+        - '@Development Tools'
+        - python36
+        - python36-devel
+        - devtoolset-8-gcc-c++
+        - devtoolset-9-gcc-c++
+        - devtoolset-10-gcc-c++
+        - devtoolset-11-gcc-c++
+        - sshpass
+        - nodejs
+        - libxml2-devel
+        - libxml2
+        - libssh2-devel
+        - libcurl-devel
+        - s3-fs
+        - blob-fuse
+        - cisf-utils
+        - net-tools
+        - dstat
+      vars:
+        ansible_become: yes
