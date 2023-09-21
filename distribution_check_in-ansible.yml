@@ -1,0 +1,26 @@
+---
+- name: Install packages depands on Distribution in Ansible
+  hosts: vm # Mention your host group
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: Set host type variable
+      set_fact:
+        host_type: "{{ 'redhat' if ansible_distribution in ['CentOS', 'RedHat'] else 'debian' }}"
+        # when: ansible_distribution in ['CentOS', 'RedHat', 'Ubuntu', 'Debian']
+    - name: Install nginx on CentOS/RedHat
+      yum:
+        name: nginx
+        state: present
+      when: ansible_distribution in ['CentOS', 'RedHat']
+    - name: Install lftp on Ubuntu/Debian
+      apt:
+        name: python3
+        state: present
+      when: host_type == 'debian'
+########
+#Run command
+#ansible-playbook distribution_check.yaml --user <admin_user_name> --ask-become-pass
+#
+#######
