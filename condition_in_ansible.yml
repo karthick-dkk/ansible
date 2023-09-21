@@ -1,0 +1,17 @@
+---
+- name: Install MariaDB or Nginx based using  host patterns match
+  hosts: all # Mention host group db and Web
+  become: yes  # This is equivalent to using sudo
+
+  tasks:
+    - name: Install MariaDB
+      yum:
+        name: MariaDB-server MariaDB-client
+        state: present
+      when: "'db' in inventory_hostname"
+
+    - name: Install Nginx
+      yum:
+        name: nginx
+        state: present
+      when: "'web' in inventory_hostname"
