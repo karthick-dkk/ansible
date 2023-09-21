@@ -1,0 +1,37 @@
+---
+- name: Download Mariadb Repo and install mariadb 10.5
+  hosts: vm # Mention Host group
+  become: yes  # Enable privilege escalation to root
+  tasks:
+    - name: Download mariadb_repo_setup script
+      ansible.builtin.get_url:
+        url: https://downloads.mariadb.com/MariaDB/mariadb_repo_setup
+        dest: /tmp/mariadb_repo_setup
+        mode: '0755'  # Set executable permissions
+
+    - name: Make script executable
+      ansible.builtin.command: chmod +x /tmp/mariadb_repo_setup
+
+    - name: Run mariadb_repo_setup script for version 10.5
+      ansible.builtin.command: /tmp/mariadb_repo_setup - mariadb-server-version="mariadb-10.5"
+
+    - name: Install MariaDB packages
+      ansible.builtin.yum:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - MariaDB-server
+        - MariaDB-compat
+        - MariaDB-client
+        - MariaDB-shared
+        - MariaDB-devel
+        - MariaDB-common
+      vars:
+        ansible_become: yes
+
+########
+#Run Command
+#
+#ansible-playbook test-host-lftp.yaml --user <admin_user> --ask-become-pass
+#
+#############
