@@ -1,0 +1,15 @@
+---
+- name: Install apache on linux 
+- hosts: webservers
+- become: yes
+  tasks:
+  - name: Install apache on ubuntu
+    apt:
+      name: apache2
+      state: present
+      update_cache: yes
+      cache_valid_time: 3600
+    tags: apache2
+  - name: Start apache2
+    service: name=ntp state=started enabled=yes
+    tags: apache2_start
