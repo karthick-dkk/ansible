@@ -19,3 +19,10 @@ ansible-playbook tags.ym --step        # Ask confirmation for each tasks
 # Variable
 
 ansible-playbook tags.yml  -e vairable_name=value   # specify the variable value in Run time 
+
+# Valut
+
+ansible-vault create new_playbook.yml   # Create Encrypted playbook
+Enter valut password:
+
+ansible-vault encrypt existing_palybook.yml # Encrypt the existing playbook
