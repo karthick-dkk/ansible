@@ -26,3 +26,7 @@ ansible-vault create new_playbook.yml   # Create Encrypted playbook
 Enter valut password:
 
 ansible-vault encrypt existing_palybook.yml # Encrypt the existing playbook
+
+ansible-vault encrypt_string --valut-id @prompt myscrectishere
+
+ansible-palybook new_playbook.yml --ask-valut-pass  # Run Encrypted Playbook 
